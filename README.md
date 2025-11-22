@@ -4,6 +4,16 @@ Panduan cepat untuk menjalankan proyek.
 
 ---
 
+## Prasyarat (Prerequisites)
+
+Sebelum menjalankan aplikasi, pastikan anda sudah menginstal perangkat lunak berikut:
+
+Python 3 (Direkomendasikan versi terbaru).
+MySQL Server (Untuk menyimpan data).
+Virtual Environment (venv) (Sangat direkomendasikan untuk isolasi proyek).
+
+---
+
 Setup Proyek 
 
 ### 1. Klon dan Masuk Folder
@@ -15,7 +25,18 @@ cd [waow_workshop]
 
 ### 2. Instal Dependensi Python
 
-Jalankan perintah ini secara berurutan untuk membuat file menginstalnya requirements:
+Jalankan perintah ini secara berurutan untuk menginstal requirements:
+
+1. Buat dan Aktifkan Virtual Environment:
+```bash
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+```
+
+2. Install Requirements
 
 ```bash
 pip install -r requirements.txt
