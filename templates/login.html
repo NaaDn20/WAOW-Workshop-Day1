@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow border-0" style="width: 400px;">
+        <div class="card-body p-4">
+            <h3 class="text-center text-primary mb-4">🔐 Login</h3>
+            
+            <div id="alertBox" class="alert alert-danger d-none"></div>
+
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2">Masuk</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <small>Belum punya akun? <a href="/register">Daftar disini</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const alertBox = document.getElementById('alertBox');
+
+        try {
+            const response = await fetch('/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = result.redirect; 
+            } else {
+                alertBox.textContent = result.error;
+                alertBox.classList.remove('d-none');
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    });
+</script>
+{% endblock %}

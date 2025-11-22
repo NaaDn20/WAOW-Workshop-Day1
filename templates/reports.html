@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>📊 Sales Reports</h2>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card bg-primary text-white">
+                <h3>Total Sales</h3>
+                <p id="totalSales">$0</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-success text-white">
+                <h3>Total Transactions</h3>
+                <p id="transactionCount">0</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card bg-info text-white">
+                <h3>Avg. Transaction</h3>
+                <p id="avgTransaction">$0</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">🏆 Top Customer</div>
+                <div class="card-body text-center">
+                    <h3 id="topCustomer">-</h3>
+                    <p class="text-muted">Highest Spender</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">💳 Payment Methods</div>
+                <div class="card-body" id="paymentChart">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">🕒 Recent Transactions</div>
+        <div class="card-body">
+            <div id="recentTransactions">
+                </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

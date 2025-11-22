@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard p-4">
+    <h1 class="mb-4">Selamat Datang di WAOW Shop! 🎉</h1>
+    
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-warning text-dark p-3 rounded shadow-sm text-center">
+                <h6 class="text-uppercase mb-2" style="font-size: 0.9rem;">Today's Sales</h6>
+                <h2 id="todaySales" class="fw-bold mb-0">$0.00</h2>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stat-card bg-white p-3 rounded shadow-sm text-center border">
+                <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.9rem;">Total Customers</h6>
+                <h2 id="totalCustomers" class="fw-bold mb-0">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card bg-white p-3 rounded shadow-sm text-center border">
+                <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.9rem;">Total Products</h6>
+                <h2 id="totalProducts" class="fw-bold mb-0">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card bg-white p-3 rounded shadow-sm text-center border">
+                <h6 class="text-muted text-uppercase mb-2" style="font-size: 0.9rem;">Total Transactions</h6>
+                <h2 id="totalTransactions" class="fw-bold mb-0">0</h2>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-3">Quick Actions</h3>
+    <div class="d-flex gap-3">
+        <a href="{{ url_for('customers_page') }}" class="btn btn-dark p-3">Kelola Customers</a>
+        <a href="{{ url_for('products_page') }}" class="btn btn-dark p-3">Kelola Products</a>
+        <a href="{{ url_for('transactions_page') }}" class="btn btn-primary p-3">Buat Transaksi Baru</a>
+    </div>
+</div>
+
+<script>
+    const formatMoney = (amount) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(amount);
+    };
+
+    async function loadDashboardStats() {
+        try {
+            const custRes = await fetch('/api/customers');
+            const customers = await custRes.json();
+            document.getElementById('totalCustomers').textContent = customers.length;
+
+            const prodRes = await fetch('/api/products');
+            const products = await prodRes.json();
+            document.getElementById('totalProducts').textContent = products.length;
+
+            const transRes = await fetch('/api/transactions');
+            const transactions = await transRes.json();
+            document.getElementById('totalTransactions').textContent = transactions.length;
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const todayString = `${year}-${month}-${day}`; 
+
+            let todayTotal = 0;
+
+            transactions.forEach(t => {
+                const transactionDateString = t.TransactionDate.substring(0, 10);
+
+                if (transactionDateString === todayString) {
+                    todayTotal += parseFloat(t.TotalAmount);
+                }
+            });
+
+            document.getElementById('todaySales').textContent = formatMoney(todayTotal);
+
+        } catch (error) {
+            console.error('Error loading dashboard stats:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDashboardStats);
+</script>
+{% endblock %}

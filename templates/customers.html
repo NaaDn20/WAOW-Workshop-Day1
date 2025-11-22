@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">👥 Customer Management</h2>
+    
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Tambah Customer Baru</h5>
+        </div>
+        <div class="card-body">
+            <form id="customerForm" class="row g-3">
+                <div class="col-md-3">
+                    <select id="gender" class="form-select" required>
+                        <option value="">Pilih Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="age" class="form-control" placeholder="Age" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" id="annual_income" class="form-control" placeholder="Annual Income (k$)" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" id="spending_score" class="form-control" placeholder="Score (1-100)" required>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-success w-100">➕ Tambah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">Daftar Customers</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover" id="customerTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Gender</th>
+                            <th>Age</th>
+                            <th>Annual Income</th>
+                            <th>Spending Score</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function loadCustomers() {
+        try {
+            const response = await fetch('/api/customers');
+            const customers = await response.json();
+            
+            const tbody = document.querySelector('#customerTable tbody');
+            tbody.innerHTML = ''; 
+            
+            customers.forEach(customer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${customer.CustomerID}</td>
+                    <td><span class="badge ${customer.Gender === 'Male' ? 'text-bg-info' : 'text-bg-danger'}">${customer.Gender}</span></td>
+                    <td>${customer.Age}</td>
+                    <td>$${customer.Annual_Income}k</td>
+                    <td>${customer.Spending_Score}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCustomer(${customer.CustomerID})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error('Error loading customers:', error);
+        }
+    }
+
+    document.getElementById('customerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const data = {
+            gender: document.getElementById('gender').value,
+            age: parseInt(document.getElementById('age').value),
+            annual_income: parseInt(document.getElementById('annual_income').value),
+            spending_score: parseInt(document.getElementById('spending_score').value)
+        };
+
+        try {
+            const response = await fetch('/api/customers', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                document.getElementById('customerForm').reset();
+                loadCustomers(); 
+            } else {
+                alert('Gagal menambah customer');
+            }
+        } catch (error) {
+            console.error('Error adding customer:', error);
+        }
+    });
+
+    async function deleteCustomer(id) {
+        if(confirm('Are you sure you want to delete this customer?')) {
+            try {
+                const response = await fetch(`/api/customers/${id}`, { method: 'DELETE' });
+                if (response.ok) loadCustomers();
+            } catch (error) {
+                console.error('Error deleting customer:', error);
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCustomers);
+</script>
+{% endblock %}
