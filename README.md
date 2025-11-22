@@ -9,8 +9,8 @@ Setup Proyek
 ### 1. Klon dan Masuk Folder
 
 ```bash
-git clone [URL_REPOSITORI_ANDA]
-cd [NAMA_FOLDER_PROYEK]
+git clone [(https://github.com/NaaDn20/WAOW-Workshop-Day1)]
+cd [waow_workshop]
 ```
 
 ### 2. Instal Dependensi Python
